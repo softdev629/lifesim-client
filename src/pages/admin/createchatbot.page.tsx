@@ -21,7 +21,7 @@ import { LoadingButton } from "@mui/lab";
 import { toast } from "react-toastify";
 
 import { useGetVoicesQuery } from "../../redux/api/voiceApi";
-import { useCreateChatbotApiMutation } from "../../redux/api/chatbotApi";
+import { useCreateChatbotMutation } from "../../redux/api/chatbotApi";
 
 const newChatbotSaveSchema = object({
   scenario: string().min(1, "Scenario field is required."),
@@ -41,20 +41,33 @@ const CreateChatbotPage = () => {
   const [count, setCount] = useState(1);
   const fileRef = useRef<HTMLInputElement>(null);
 
-  const [createChatbot, createState] = useCreateChatbotApiMutation();
+  const [createChatbot, createState] = useCreateChatbotMutation();
   const methods = useForm<NewChatbotSaveSchema>({
     resolver: zodResolver(newChatbotSaveSchema),
   });
 
+  const {
+    handleSubmit,
+    register,
+    setValue,
+    reset,
+    formState: { errors },
+  } = methods;
+
   useEffect(() => {
-    if (createState.isSuccess) toast.success("Chatbot created successfully!");
+    if (createState.isSuccess) {
+      reset();
+      toast.success("Chatbot created successfully!");
+    }
     if (createState.isError) {
-      console.log(createState.error);
+      if (Array.isArray((createState.error as any).data.detail)) {
+        (createState.error as any).data.detail.map((el: any) =>
+          toast.error(`${el.loc[1]} ${el.msg}`)
+        );
+      } else toast.error((createState.error as any).data.detail);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [createState]);
-
-  const { handleSubmit, register, setValue } = methods;
 
   const onSubmitHandler: SubmitHandler<NewChatbotSaveSchema> = (
     values: NewChatbotSaveSchema
@@ -87,6 +100,8 @@ const CreateChatbotPage = () => {
                 label="Scenario"
                 placeholder="Name of Scenario"
                 sx={{ flexGrow: 1 }}
+                error={!!errors["scenario"]}
+                helperText={errors["scenario"]?.message}
               />
               <Button
                 sx={{ flexGrow: 1 }}
@@ -117,6 +132,8 @@ const CreateChatbotPage = () => {
               rows={5}
               sx={{ mt: 4 }}
               fullWidth
+              error={!!errors["role_play_system_prompt"]}
+              helperText={errors["role_play_system_prompt"]?.message}
             />
             <TextField
               {...register("guide_system_prompt")}
@@ -126,6 +143,8 @@ const CreateChatbotPage = () => {
               rows={5}
               sx={{ mt: 4 }}
               fullWidth
+              error={!!errors["guide_system_prompt"]}
+              helperText={errors["guide_system_prompt"]?.message}
             />
             <FormControl
               sx={{
@@ -165,6 +184,14 @@ const CreateChatbotPage = () => {
                   {...register(`person_details.${index}`)}
                   label={`Label of ${row} person details`}
                   fullWidth
+                  error={
+                    errors["person_details"] &&
+                    !!errors[`person_details`][index]
+                  }
+                  helperText={
+                    errors["person_details"] &&
+                    errors[`person_details`][index]?.message
+                  }
                 />
                 <FormControl fullWidth>
                   <InputLabel id="voice-label">Select Voice</InputLabel>
@@ -179,9 +206,9 @@ const CreateChatbotPage = () => {
                     {getVoices.data?.map((item: any, voice_index) => (
                       <MenuItem
                         key={`voice_${index}_item_${voice_index}`}
-                        value={item["value"]}
+                        value={item["id"]}
                       >
-                        {item["name"]} ({item["gender"]}) - {item["language"]}
+                        {item["name"]} ({item["gender"]})
                       </MenuItem>
                     ))}
                   </Select>

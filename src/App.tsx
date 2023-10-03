@@ -5,6 +5,8 @@ import { Routes, Route } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
 
 import CreateChatbotPage from "./pages/admin/createchatbot.page";
+import BotlistPgae from "./pages/botlist.page";
+import ChatbotPage from "./pages/chatbot.page";
 
 function App() {
   return (
@@ -16,6 +18,10 @@ function App() {
           <Route path="chatbot">
             <Route path="create" element={<CreateChatbotPage />} />
           </Route>
+        </Route>
+        <Route path="/" element={<BotlistPgae />} />
+        <Route path="/chatbot/:slug">
+          <Route index element={<ChatbotPage />} />
         </Route>
       </Routes>
     </>
