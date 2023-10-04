@@ -1,6 +1,5 @@
 import { createApi } from "@reduxjs/toolkit/dist/query/react";
 import customFetchBase from "./customFetchBase";
-import { IGenericResponse } from "./types";
 
 export const voiceApi = createApi({
   reducerPath: "voiceApi",

@@ -7,6 +7,8 @@ import "react-toastify/dist/ReactToastify.css";
 import CreateChatbotPage from "./pages/admin/createchatbot.page";
 import BotlistPgae from "./pages/botlist.page";
 import ChatbotPage from "./pages/chatbot.page";
+import Layout from "./components/Layout";
+import LandingPage from "./pages/landing.page";
 
 function App() {
   return (
@@ -14,14 +16,17 @@ function App() {
       <CssBaseline />
       <ToastContainer />
       <Routes>
-        <Route path="admin">
-          <Route path="chatbot">
-            <Route path="create" element={<CreateChatbotPage />} />
+        <Route element={<Layout />}>
+          <Route index element={<LandingPage />} />
+          <Route path="admin">
+            <Route path="chatbot">
+              <Route path="create" element={<CreateChatbotPage />} />
+            </Route>
           </Route>
-        </Route>
-        <Route path="/" element={<BotlistPgae />} />
-        <Route path="/chatbot/:slug">
-          <Route index element={<ChatbotPage />} />
+          <Route path="chatbots">
+            <Route index element={<BotlistPgae />} />
+            <Route path=":slug" element={<ChatbotPage />} />
+          </Route>
         </Route>
       </Routes>
     </>

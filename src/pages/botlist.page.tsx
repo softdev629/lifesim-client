@@ -1,10 +1,14 @@
 import {
   Container,
   Stack,
-  Box,
   ButtonBase,
   Typography,
   Link,
+  Card,
+  CardMedia,
+  CardActions,
+  CardContent,
+  Button,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { useGetChatbotsQuery } from "../redux/api/chatbotApi";
@@ -58,7 +62,7 @@ const BotlistPgae = () => {
 
   return (
     <>
-      <Container sx={{ mt: 4 }}>
+      <Container sx={{ mt: 4, py: 4 }}>
         <Stack
           direction="row"
           justifyContent="space-evenly"
@@ -67,35 +71,32 @@ const BotlistPgae = () => {
         >
           {chatbotInfo.data?.map((item, index) => (
             <Stack key={`chatbot_itme_${index}`} alignItems="center">
-              <ImageButton
-                focusRipple
-                style={{ width: 300 }}
-                onClick={() => {
-                  navigate(`/chatbot/${item.slug}`);
-                }}
-              >
-                <ImageSrc
-                  style={{
-                    backgroundImage: `url("${process.env.REACT_APP_SERVER_ENDPOINT}/static/images/${item.image}")`,
-                  }}
+              <Card sx={{ width: 345 }}>
+                <CardMedia
+                  sx={{ height: 300 }}
+                  image={`${process.env.REACT_APP_SERVER_ENDPOINT}/static/images/${item.image}`}
+                  title="green iguana"
                 />
-                <ImageBackdrop className="MuiImageBackdrop-root" />
-              </ImageButton>
-              <Link
-                href="#"
-                width={250}
-                textAlign="center"
-                underline="hover"
-                mt={1}
-                color="black"
-                fontWeight={600}
-                onClick={(event) => {
-                  event.preventDefault();
-                  navigate(`/chatbot/${item.slug}`);
-                }}
-              >
-                {item.scenario}
-              </Link>
+                <CardContent>
+                  <Typography
+                    gutterBottom
+                    variant="h5"
+                    component="div"
+                    display="flex"
+                    textAlign="center"
+                    justifyContent="center"
+                    alignItems="center"
+                    height={50}
+                  >
+                    {item.scenario}
+                  </Typography>
+                </CardContent>
+                <CardActions>
+                  <Button size="small" variant="contained" fullWidth>
+                    Chat
+                  </Button>
+                </CardActions>
+              </Card>
             </Stack>
           ))}
         </Stack>
