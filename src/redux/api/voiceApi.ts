@@ -13,7 +13,17 @@ export const voiceApi = createApi({
       },
       transformResponse: (result: { voices: Array<Object> }) => result.voices,
     }),
+    getTranscript: builder.mutation<string, FormData>({
+      query(data) {
+        return {
+          method: "POST",
+          url: "/voices/transcript",
+          body: data,
+        };
+      },
+      transformResponse: (result: { data: string }) => result.data,
+    }),
   }),
 });
 
-export const { useGetVoicesQuery } = voiceApi;
+export const { useGetVoicesQuery, useGetTranscriptMutation } = voiceApi;
