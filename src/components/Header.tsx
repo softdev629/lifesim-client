@@ -18,11 +18,12 @@ import { useNavigate } from "react-router-dom";
 const pages = [
   { text: "Products", to: "/chatbots" },
   { text: "Pricing", to: "/pricing" },
+  { text: "Create", to: "/admin/chatbot/create" },
 ];
 const settings = [
   { text: "Profile", to: "/profile" },
-  { text: "Account", to: "account" },
-  { text: "Logout", to: "logout" },
+  { text: "Account", to: "/account" },
+  { text: "Logout", to: "/logout" },
 ];
 
 const Header = () => {

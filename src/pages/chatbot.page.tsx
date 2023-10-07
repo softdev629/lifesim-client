@@ -23,11 +23,15 @@ import {
   Close,
 } from "@mui/icons-material";
 import { useParams } from "react-router-dom";
-import { useAudioRecorder } from "react-audio-voice-recorder";
+// import { useAudioRecorder } from "react-audio-voice-recorder";
+
+import SpeechRecognition, {
+  useSpeechRecognition,
+} from "react-speech-recognition";
 
 import { useChatMutation, useGetChatbotQuery } from "../redux/api/chatbotApi";
 import FullScreenLoader from "../components/FullScreenLoader";
-import { useGetTranscriptMutation } from "../redux/api/voiceApi";
+// import { useGetTranscriptMutation } from "../redux/api/voiceApi";
 
 const style = {
   position: "absolute" as "absolute",
@@ -51,36 +55,54 @@ const ChatbotPage = () => {
   const [messages, setMessages] = useState<{ type: string; text: string }[]>(
     []
   );
+
   const [msg, setMsg] = useState("");
   const historyRef = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState(false);
+  const [previousTranscript, setPreviousTranscript] =
+    useState("22323903249432");
 
-  const { startRecording, stopRecording, recordingBlob, isRecording } =
-    useAudioRecorder();
+  const [isRecording, setIsRecoding] = useState(false);
 
-  const [getTranscript, tranState] = useGetTranscriptMutation();
+  // const { startRecording, stopRecording, recordingBlob, isRecording } =
+  //   useAudioRecorder();
+  // const [getTranscript, tranState] = useGetTranscriptMutation();
+
+  const {
+    transcript,
+    resetTranscript,
+    isMicrophoneAvailable,
+    browserSupportsSpeechRecognition,
+    listening,
+  } = useSpeechRecognition();
+
+  console.log("transcript ----> ", transcript);
+  console.log("listening ----> ", listening);
 
   useEffect(() => {
     historyRef.current?.scrollTo({ top: historyRef.current.scrollHeight });
   }, [messages]);
 
-  useEffect(() => {
-    if (!recordingBlob) return;
+  console.log("microphone available ----> ", isMicrophoneAvailable);
+  console.log("browser support ----> ", browserSupportsSpeechRecognition);
 
-    const audioFile = new File([recordingBlob], "audiofile.mp3", {
-      type: "audio.mpeg",
-    });
+  // useEffect(() => {
+  //   if (!recordingBlob) return;
 
-    const formdata = new FormData();
-    formdata.append("audio", audioFile);
-    getTranscript(formdata);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [recordingBlob]);
+  //   const audioFile = new File([recordingBlob], "audiofile.mp3", {
+  //     type: "audio.mpeg",
+  //   });
 
-  useEffect(() => {
-    if (tranState.isSuccess) setMsg(tranState.data);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tranState]);
+  //   const formdata = new FormData();
+  //   formdata.append("audio", audioFile);
+  //   getTranscript(formdata);
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [recordingBlob]);
+
+  // useEffect(() => {
+  //   if (tranState.isSuccess) setMsg(tranState.data);
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [tranState]);
 
   useEffect(() => {
     if (chatState.isSuccess) {
@@ -96,6 +118,22 @@ const ChatbotPage = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chatState]);
+
+  useEffect(() => {
+    setMsg(transcript);
+  }, [transcript]);
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      if (previousTranscript === transcript && transcript !== "") {
+        handleSubmit();
+        resetTranscript();
+      } else setPreviousTranscript(transcript);
+    }, 3000);
+
+    return () => clearInterval(intervalId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   if (isLoading || !data) return <FullScreenLoader />;
 
@@ -200,8 +238,13 @@ const ChatbotPage = () => {
               <Box display="flex" justifyContent="space-evenly">
                 <IconButton
                   onClick={async () => {
-                    if (isRecording) stopRecording();
-                    else startRecording();
+                    if (isRecording) {
+                      SpeechRecognition.stopListening();
+                    } else {
+                      console.error("speech start!");
+                      SpeechRecognition.startListening({ continuous: true });
+                    }
+                    setIsRecoding(!isRecording);
                   }}
                 >
                   {!isRecording ? (
@@ -210,7 +253,7 @@ const ChatbotPage = () => {
                     <FiberManualRecord sx={{ fill: "red" }} />
                   )}
                 </IconButton>
-                <IconButton>
+                <IconButton onClick={() => handleSubmit()}>
                   <Send />
                 </IconButton>
               </Box>
