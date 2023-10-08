@@ -127,6 +127,7 @@ const ChatbotPage = () => {
   useEffect(() => {
     const intervalId = setInterval(() => {
       const currentTranscript = transcriptRef.current;
+      console.error(previousTranscript, currentTranscript);
       if (
         previousTranscript === currentTranscript &&
         currentTranscript !== ""
