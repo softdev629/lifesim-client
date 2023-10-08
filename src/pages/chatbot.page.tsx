@@ -113,6 +113,7 @@ const ChatbotPage = () => {
   useEffect(() => {
     if (chatState.isSuccess) {
       messagesRef.current.push({ type: "assistant", text: chatState.data.msg });
+      setMessages([...messagesRef.current]);
       const audio = new Audio(chatState.data.url);
       audio.play();
     }
@@ -125,15 +126,18 @@ const ChatbotPage = () => {
   useEffect(() => {
     msgRef.current = transcript;
     transcriptRef.current = transcript;
+    setMsg(transcript);
   }, [transcript]);
 
   const handleSubmit = () => {
     messagesRef.current.push({ type: "user", text: msgRef.current });
+    setMessages([...messagesRef.current]);
     getResponse({
       slug: slug as string,
       msg: messagesRef.current,
     });
     msgRef.current = "";
+    setMsg("");
     resetTranscript();
   };
 
@@ -240,7 +244,10 @@ const ChatbotPage = () => {
               rows={3}
               fullWidth
               value={msg}
-              onChange={(event) => (msgRef.current = event.target.value)}
+              onChange={(event) => {
+                setMsg(event.target.value);
+                msgRef.current = event.target.value;
+              }}
               onKeyUp={(event) => {
                 if (event.key === "Enter") handleSubmit();
               }}
