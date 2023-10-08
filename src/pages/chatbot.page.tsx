@@ -52,9 +52,7 @@ const ChatbotPage = () => {
   const [getResponse, chatState] = useChatMutation();
 
   const [count, setCount] = useState(1);
-  const [messages, setMessages] = useState<{ type: string; text: string }[]>(
-    []
-  );
+  const messagesRef = useRef<{ type: string; text: string }[]>([]);
 
   const msgRef = useRef<string>("");
   const historyRef = useRef<HTMLDivElement>(null);
@@ -81,7 +79,7 @@ const ChatbotPage = () => {
 
   useEffect(() => {
     historyRef.current?.scrollTo({ top: historyRef.current.scrollHeight });
-  }, [messages]);
+  }, [messagesRef.current]);
 
   console.log("microphone available ----> ", isMicrophoneAvailable);
   console.log("browser support ----> ", browserSupportsSpeechRecognition);
@@ -106,10 +104,7 @@ const ChatbotPage = () => {
 
   useEffect(() => {
     if (chatState.isSuccess) {
-      setMessages([
-        ...messages,
-        { type: "assistant", text: chatState.data.msg },
-      ]);
+      messagesRef.current.push({ type: "assistant", text: chatState.data.msg });
       const audio = new Audio(chatState.data.url);
       audio.play();
     }
@@ -125,11 +120,12 @@ const ChatbotPage = () => {
   }, [transcript]);
 
   const handleSubmit = () => {
-    setMessages([...messages, { type: "user", text: msgRef.current }]);
+    messagesRef.current.push({ type: "user", text: msgRef.current });
     getResponse({
       slug: slug as string,
-      msg: [...messages, { type: "user", text: msgRef.current }],
+      msg: messagesRef.current,
     });
+    msgRef.current = "";
     resetTranscript();
   };
 
@@ -198,7 +194,7 @@ const ChatbotPage = () => {
           // bgcolor="white"
         >
           <Box borderRadius={4} flex={1} overflow="auto" p={2} ref={historyRef}>
-            {messages.map((row, index) => (
+            {messagesRef.current.map((row, index) => (
               <Box
                 display="flex"
                 justifyContent={row.type === "user" ? "flex-end" : "flex-start"}
