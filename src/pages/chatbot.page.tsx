@@ -59,7 +59,7 @@ const ChatbotPage = () => {
   const [msg, setMsg] = useState("");
   const historyRef = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState(false);
-  const [previousTranscript, setPreviousTranscript] = useState("");
+  const previousRef = useRef<string>("");
   const transcriptRef = useRef<string>("");
   const [isRecording, setIsRecoding] = useState(false);
 
@@ -75,7 +75,7 @@ const ChatbotPage = () => {
     listening,
   } = useSpeechRecognition();
 
-  console.log("preivous ---> ", previousTranscript);
+  console.log("preivous ---> ", previousRef.current);
   console.log("transcript ----> ", transcript);
   console.log("listening ----> ", listening);
 
@@ -127,17 +127,15 @@ const ChatbotPage = () => {
   useEffect(() => {
     const intervalId = setInterval(() => {
       const currentTranscript = transcriptRef.current;
-      console.error(previousTranscript, currentTranscript);
-      if (
-        previousTranscript === currentTranscript &&
-        currentTranscript !== ""
-      ) {
+      const previousScript = previousRef.current;
+      console.error(previousScript, currentTranscript);
+      if (previousScript === currentTranscript && currentTranscript !== "") {
         console.log("HIHIHI");
         handleSubmit();
         resetTranscript();
       } else {
         console.log("HOHOHO ----> ", currentTranscript);
-        setPreviousTranscript((previousTranscript) => currentTranscript);
+        previousRef.current = currentTranscript;
       }
     }, 1000);
 
