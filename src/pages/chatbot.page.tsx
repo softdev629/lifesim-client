@@ -83,11 +83,7 @@ const ChatbotPage = () => {
 
   useEffect(() => {
     historyRef.current?.scrollTo({ top: historyRef.current.scrollHeight });
-    setMessages([...messagesRef.current]);
-  }, [messagesRef]);
-  useEffect(() => {
-    setMsg(msgRef.current);
-  }, [msgRef]);
+  }, [messages]);
 
   console.log("microphone available ----> ", isMicrophoneAvailable);
   console.log("browser support ----> ", browserSupportsSpeechRecognition);
