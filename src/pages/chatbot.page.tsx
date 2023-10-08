@@ -58,6 +58,7 @@ const ChatbotPage = () => {
   );
 
   const msgRef = useRef<string>("");
+  const [msg, setMsg] = useState("");
   const historyRef = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState(false);
   const previousRef = useRef<string>("");
@@ -83,7 +84,10 @@ const ChatbotPage = () => {
   useEffect(() => {
     historyRef.current?.scrollTo({ top: historyRef.current.scrollHeight });
     setMessages([...messagesRef.current]);
-  }, [messagesRef.current]);
+  }, [messagesRef]);
+  useEffect(() => {
+    setMsg(msgRef.current);
+  }, [msgRef]);
 
   console.log("microphone available ----> ", isMicrophoneAvailable);
   console.log("browser support ----> ", browserSupportsSpeechRecognition);
@@ -235,7 +239,7 @@ const ChatbotPage = () => {
               multiline
               rows={3}
               fullWidth
-              value={msgRef.current}
+              value={msg}
               onChange={(event) => (msgRef.current = event.target.value)}
               onKeyUp={(event) => {
                 if (event.key === "Enter") handleSubmit();
