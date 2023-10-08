@@ -59,8 +59,7 @@ const ChatbotPage = () => {
   const [msg, setMsg] = useState("");
   const historyRef = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState(false);
-  const [previousTranscript, setPreviousTranscript] =
-    useState("22323903249432");
+  const [previousTranscript, setPreviousTranscript] = useState("");
 
   const [isRecording, setIsRecoding] = useState(false);
 
@@ -123,13 +122,20 @@ const ChatbotPage = () => {
     setMsg(transcript);
   }, [transcript]);
 
+  const checkStatus = () => {
+    console.log(previousTranscript, transcript === "");
+    if (previousTranscript === transcript && transcript !== "") {
+      console.log("HIHIHI");
+      handleSubmit();
+      resetTranscript();
+    } else {
+      console.log("HOHOHO");
+      setPreviousTranscript(transcript);
+    }
+  };
+
   useEffect(() => {
-    const intervalId = setInterval(() => {
-      if (previousTranscript === transcript && transcript !== "") {
-        handleSubmit();
-        resetTranscript();
-      } else setPreviousTranscript(transcript);
-    }, 3000);
+    const intervalId = setInterval(checkStatus, 3000);
 
     return () => clearInterval(intervalId);
     // eslint-disable-next-line react-hooks/exhaustive-deps
