@@ -125,11 +125,11 @@ const ChatbotPage = () => {
   }, [transcript]);
 
   const handleSubmit = () => {
+    setMessages([...messages, { type: "user", text: msg }]);
     getResponse({
       slug: slug as string,
       msg: [...messages, { type: "user", text: msg }],
     });
-    setMessages([...messages, { type: "user", text: msg }]);
     resetTranscript();
   };
 
@@ -140,6 +140,7 @@ const ChatbotPage = () => {
       console.error(previousScript, currentTranscript);
       if (previousScript === currentTranscript && currentTranscript !== "") {
         console.log("HIHIHI");
+        console.log("msg ----> ", msg);
         handleSubmit();
       } else {
         console.log("HOHOHO ----> ", currentTranscript);
