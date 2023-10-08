@@ -53,6 +53,9 @@ const ChatbotPage = () => {
 
   const [count, setCount] = useState(1);
   const messagesRef = useRef<{ type: string; text: string }[]>([]);
+  const [messages, setMessages] = useState<{ type: string; text: string }[]>(
+    []
+  );
 
   const msgRef = useRef<string>("");
   const historyRef = useRef<HTMLDivElement>(null);
@@ -79,6 +82,7 @@ const ChatbotPage = () => {
 
   useEffect(() => {
     historyRef.current?.scrollTo({ top: historyRef.current.scrollHeight });
+    setMessages([...messagesRef.current]);
   }, [messagesRef.current]);
 
   console.log("microphone available ----> ", isMicrophoneAvailable);
@@ -194,7 +198,7 @@ const ChatbotPage = () => {
           // bgcolor="white"
         >
           <Box borderRadius={4} flex={1} overflow="auto" p={2} ref={historyRef}>
-            {messagesRef.current.map((row, index) => (
+            {messages.map((row, index) => (
               <Box
                 display="flex"
                 justifyContent={row.type === "user" ? "flex-end" : "flex-start"}
