@@ -120,7 +120,7 @@ const ChatbotPage = () => {
   }, [chatState]);
 
   useEffect(() => {
-    msgRef.current;
+    msgRef.current = transcript;
     transcriptRef.current = transcript;
   }, [transcript]);
 
