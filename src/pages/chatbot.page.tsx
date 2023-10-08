@@ -130,8 +130,8 @@ const ChatbotPage = () => {
         handleSubmit();
         resetTranscript();
       } else {
-        console.log("HOHOHO");
-        setPreviousTranscript((transcript) => transcript);
+        console.log("HOHOHO", transcript);
+        setPreviousTranscript((previousTranscript) => transcript);
       }
     }, 1000);
 
