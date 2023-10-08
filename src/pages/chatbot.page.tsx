@@ -125,13 +125,13 @@ const ChatbotPage = () => {
 
   useEffect(() => {
     const intervalId = setInterval(() => {
-      if (previousTranscript === transcript && transcript !== "") {
+      if (previousTranscript === msg && msg !== "") {
         console.log("HIHIHI");
         handleSubmit();
         resetTranscript();
       } else {
-        console.log("HOHOHO", transcript);
-        setPreviousTranscript((previousTranscript) => transcript);
+        console.log("HOHOHO ----> ", msg);
+        setPreviousTranscript((previousTranscript) => msg);
       }
     }, 1000);
 
