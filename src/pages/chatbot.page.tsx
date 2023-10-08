@@ -124,6 +124,15 @@ const ChatbotPage = () => {
     transcriptRef.current = transcript;
   }, [transcript]);
 
+  const handleSubmit = () => {
+    getResponse({
+      slug: slug as string,
+      msg: [...messages, { type: "user", text: msg }],
+    });
+    setMessages([...messages, { type: "user", text: msg }]);
+    setMsg("");
+  };
+
   useEffect(() => {
     const intervalId = setInterval(() => {
       const currentTranscript = transcriptRef.current;
@@ -144,15 +153,6 @@ const ChatbotPage = () => {
   }, []);
 
   if (isLoading || !data) return <FullScreenLoader />;
-
-  const handleSubmit = () => {
-    getResponse({
-      slug: slug as string,
-      msg: [...messages, { type: "user", text: msg }],
-    });
-    setMessages([...messages, { type: "user", text: msg }]);
-    setMsg("");
-  };
 
   return (
     <>
