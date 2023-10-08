@@ -130,7 +130,7 @@ const ChatbotPage = () => {
       msg: [...messages, { type: "user", text: msg }],
     });
     setMessages([...messages, { type: "user", text: msg }]);
-    setMsg("");
+    resetTranscript();
   };
 
   useEffect(() => {
@@ -141,7 +141,6 @@ const ChatbotPage = () => {
       if (previousScript === currentTranscript && currentTranscript !== "") {
         console.log("HIHIHI");
         handleSubmit();
-        resetTranscript();
       } else {
         console.log("HOHOHO ----> ", currentTranscript);
         previousRef.current = currentTranscript;
