@@ -56,7 +56,7 @@ const ChatbotPage = () => {
     []
   );
 
-  const [msg, setMsg] = useState("");
+  const msgRef = useRef<string>("");
   const historyRef = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState(false);
   const previousRef = useRef<string>("");
@@ -120,20 +120,18 @@ const ChatbotPage = () => {
   }, [chatState]);
 
   useEffect(() => {
-    setMsg(transcript);
+    msgRef.current;
     transcriptRef.current = transcript;
   }, [transcript]);
 
   const handleSubmit = () => {
-    setMessages([...messages, { type: "user", text: msg }]);
+    setMessages([...messages, { type: "user", text: msgRef.current }]);
     getResponse({
       slug: slug as string,
-      msg: [...messages, { type: "user", text: msg }],
+      msg: [...messages, { type: "user", text: msgRef.current }],
     });
     resetTranscript();
   };
-
-  console.error("msg ----> ", msg);
 
   useEffect(() => {
     const intervalId = setInterval(() => {
@@ -237,8 +235,8 @@ const ChatbotPage = () => {
               multiline
               rows={3}
               fullWidth
-              value={msg}
-              onChange={(event) => setMsg(event.target.value)}
+              value={msgRef.current}
+              onChange={(event) => (msgRef.current = event.target.value)}
               onKeyUp={(event) => {
                 if (event.key === "Enter") handleSubmit();
               }}
