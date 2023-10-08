@@ -75,6 +75,7 @@ const ChatbotPage = () => {
     listening,
   } = useSpeechRecognition();
 
+  console.log("preivous ---> ", previousTranscript);
   console.log("transcript ----> ", transcript);
   console.log("listening ----> ", listening);
 
@@ -122,20 +123,17 @@ const ChatbotPage = () => {
     setMsg(transcript);
   }, [transcript]);
 
-  const checkStatus = () => {
-    console.log(previousTranscript, transcript === "");
-    if (previousTranscript === transcript && transcript !== "") {
-      console.log("HIHIHI");
-      handleSubmit();
-      resetTranscript();
-    } else {
-      console.log("HOHOHO");
-      setPreviousTranscript(transcript);
-    }
-  };
-
   useEffect(() => {
-    const intervalId = setInterval(checkStatus, 3000);
+    const intervalId = setInterval(() => {
+      if (previousTranscript === transcript && transcript !== "") {
+        console.log("HIHIHI");
+        handleSubmit();
+        resetTranscript();
+      } else {
+        console.log("HOHOHO");
+        setPreviousTranscript((transcript) => transcript);
+      }
+    }, 1000);
 
     return () => clearInterval(intervalId);
     // eslint-disable-next-line react-hooks/exhaustive-deps
