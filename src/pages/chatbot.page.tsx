@@ -56,14 +56,15 @@ const ChatbotPage = () => {
   const [messages, setMessages] = useState<{ type: string; text: string }[]>(
     []
   );
-
-  const msgRef = useRef<string>("");
-  const [msg, setMsg] = useState("");
-  const historyRef = useRef<HTMLDivElement>(null);
-  const [open, setOpen] = useState(false);
-  const previousRef = useRef<string>("");
-  const transcriptRef = useRef<string>("");
   const [isRecording, setIsRecoding] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [msg, setMsg] = useState("");
+  const [ttsRequired, setTTSRequired] = useState(true);
+
+  const historyRef = useRef<HTMLDivElement>(null);
+  const previousRef = useRef<string>("");
+  const msgRef = useRef<string>("");
+  const transcriptRef = useRef<string>("");
 
   // const { startRecording, stopRecording, recordingBlob, isRecording } =
   //   useAudioRecorder();
@@ -72,21 +73,21 @@ const ChatbotPage = () => {
   const {
     transcript,
     resetTranscript,
-    isMicrophoneAvailable,
-    browserSupportsSpeechRecognition,
-    listening,
+    // isMicrophoneAvailable,
+    // browserSupportsSpeechRecognition,
+    // listening,
   } = useSpeechRecognition();
 
-  console.log("preivous ---> ", previousRef.current);
-  console.log("transcript ----> ", transcript);
-  console.log("listening ----> ", listening);
+  // console.log("preivous ---> ", previousRef.current);
+  // console.log("transcript ----> ", transcript);
+  // console.log("listening ----> ", listening);
 
   useEffect(() => {
     historyRef.current?.scrollTo({ top: historyRef.current.scrollHeight });
   }, [messages]);
 
-  console.log("microphone available ----> ", isMicrophoneAvailable);
-  console.log("browser support ----> ", browserSupportsSpeechRecognition);
+  // console.log("microphone available ----> ", isMicrophoneAvailable);
+  // console.log("browser support ----> ", browserSsupportsSpeechRecognition);
 
   // useEffect(() => {
   //   if (!recordingBlob) return;
@@ -141,12 +142,12 @@ const ChatbotPage = () => {
     const intervalId = setInterval(() => {
       const currentTranscript = transcriptRef.current;
       const previousScript = previousRef.current;
-      console.error(previousScript, currentTranscript);
+      // console.error(previousScript, currentTranscript);
       if (previousScript === currentTranscript && currentTranscript !== "") {
-        console.log("HIHIHI");
+        // console.log("HIHIHI");
         handleSubmit();
       } else {
-        console.log("HOHOHO ----> ", currentTranscript);
+        // console.log("HOHOHO ----> ", currentTranscript);
         previousRef.current = currentTranscript;
       }
     }, 1000);
@@ -255,7 +256,7 @@ const ChatbotPage = () => {
                     if (isRecording) {
                       SpeechRecognition.stopListening();
                     } else {
-                      console.error("speech start!");
+                      // console.error("speech start!");
                       SpeechRecognition.startListening({ continuous: true });
                     }
                     setIsRecoding(!isRecording);
@@ -274,7 +275,12 @@ const ChatbotPage = () => {
               <FormGroup sx={{ mt: 2 }}>
                 <FormControlLabel
                   sx={{ width: 120 }}
-                  control={<Switch defaultChecked />}
+                  control={
+                    <Switch
+                      value={ttsRequired}
+                      onChange={(event) => setTTSRequired(event.target.checked)}
+                    />
+                  }
                   label="Audio Response"
                 />
               </FormGroup>

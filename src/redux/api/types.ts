@@ -32,3 +32,13 @@ export interface IChatbotInfo {
   image: string;
   person_details: string[];
 }
+
+export interface IChatRequest {
+  slug: string;
+  msg: { type: string; text: string }[];
+  tts_required: boolean;
+  name: string;
+  count: number;
+  concern: string;
+  person_details: string[];
+}

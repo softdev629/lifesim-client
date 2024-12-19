@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, MutableRefObject } from "react";
 import {
   Container,
   Box,
@@ -33,6 +33,7 @@ const newChatbotSaveSchema = object({
   guide_system_prompt: string().min(1, "System prompt for guide is required."),
   person_details: array(string().min(1, "Person detail is required.")),
   person_voices: array(string().min(1, "Person voice is required.")),
+  person_prefix: array(string().min(1, "Person prefix is required.")),
 });
 
 export type NewChatbotSaveSchema = TypeOf<typeof newChatbotSaveSchema>;
@@ -40,6 +41,7 @@ export type NewChatbotSaveSchema = TypeOf<typeof newChatbotSaveSchema>;
 const CreateChatbotPage = () => {
   const [count, setCount] = useState(1);
   const fileRef = useRef<HTMLInputElement>(null);
+  const imgRef = useRef<HTMLImageElement>(null);
 
   const [createChatbot, createState] = useCreateChatbotMutation();
   const methods = useForm<NewChatbotSaveSchema>({
@@ -72,7 +74,6 @@ const CreateChatbotPage = () => {
   const onSubmitHandler: SubmitHandler<NewChatbotSaveSchema> = (
     values: NewChatbotSaveSchema
   ) => {
-    console.log(values);
     const formData = new FormData();
     formData.append("scenario", values.scenario);
     formData.append("image", values.image);
@@ -80,6 +81,7 @@ const CreateChatbotPage = () => {
     formData.append("guide_system_prompt", values.guide_system_prompt);
     formData.append("person_details", JSON.stringify(values.person_details));
     formData.append("person_voices", JSON.stringify(values.person_voices));
+    formData.append("person_prefix", JSON.stringify(values.person_prefix));
     createChatbot(formData);
   };
 
@@ -120,10 +122,18 @@ const CreateChatbotPage = () => {
                 onChange={(event) => {
                   if (event.target.files) {
                     setValue("image", event.target.files[0]);
+                    const reader = new FileReader();
+                    reader.onload = () => {
+                      (
+                        imgRef as MutableRefObject<HTMLImageElement>
+                      ).current.src = reader.result as string;
+                    };
+                    reader.readAsDataURL(event.target.files[0]);
                   }
                 }}
               />
             </Box>
+            <img ref={imgRef} alt="" />
             <TextField
               {...register("role_play_system_prompt")}
               label="System Prompt for Role-Play"
@@ -214,6 +224,18 @@ const CreateChatbotPage = () => {
                   </Select>
                   <FormHelperText></FormHelperText>
                 </FormControl>
+                <TextField
+                  {...register(`person_prefix.${index}`)}
+                  label="Prefix"
+                  fullWidth
+                  error={
+                    errors["person_prefix"] && !!errors[`person_prefix`][index]
+                  }
+                  helperText={
+                    errors["person_prefix"] &&
+                    errors[`person_prefix`][index]?.message
+                  }
+                />
               </Box>
             ))}
             <LoadingButton
